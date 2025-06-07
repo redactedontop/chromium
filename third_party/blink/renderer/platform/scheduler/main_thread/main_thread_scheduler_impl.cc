@@ -1165,24 +1165,7 @@ void MainThreadSchedulerImpl::PerformMicrotaskCheckpoint() {
 // static
 bool MainThreadSchedulerImpl::ShouldPrioritizeInputEvent(
     const blink::WebInputEvent& web_input_event) {
-  // We regard MouseMove events with the left mouse button down as a signal
-  // that the user is doing something requiring a smooth frame rate.
-  if ((web_input_event.GetType() == blink::WebInputEvent::Type::kMouseDown ||
-       web_input_event.GetType() == blink::WebInputEvent::Type::kMouseMove) &&
-      (web_input_event.GetModifiers() &
-       blink::WebInputEvent::kLeftButtonDown)) {
-    return true;
-  }
-  // Ignore all other mouse events because they probably don't signal user
-  // interaction needing a smooth framerate. NOTE isMouseEventType returns false
-  // for mouse wheel events, hence we regard them as user input.
-  // Ignore keyboard events because it doesn't really make sense to enter
-  // compositor priority for them.
-  if (blink::WebInputEvent::IsMouseEventType(web_input_event.GetType()) ||
-      blink::WebInputEvent::IsKeyboardEventType(web_input_event.GetType())) {
     return false;
-  }
-  return true;
 }
 
 void MainThreadSchedulerImpl::DidHandleInputEventOnCompositorThread(
